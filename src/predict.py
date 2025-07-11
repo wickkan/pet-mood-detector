@@ -16,26 +16,30 @@ import matplotlib.pyplot as plt
 from model import PetMoodClassifier
 
 
-def load_model(model_path: str, device: str = 'cpu') -> PetMoodClassifier:
+def load_model(model_path: str, device: str = 'cpu', backbone="mobilenet_v3_small", lightweight=True):
     """
     Load a trained model.
     
     Args:
         model_path: Path to the model checkpoint
         device: Device to load the model on ('cuda' or 'cpu')
+        backbone: Model backbone to use
+        lightweight: Whether to use lightweight model architecture
         
     Returns:
         Loaded model
     """
-    # Check if model path exists
+    # Check if model exists
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
     
-    # Load the model
-    model = PetMoodClassifier.load(model_path, device)
+    # Load model
+    model = PetMoodClassifier(backbone=backbone, lightweight=lightweight)
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.to(device)
     model.eval()
     
-    print(f"Model loaded from {model_path}")
+    print(f"Model loaded from {model_path} using {backbone} backbone")
     return model
 
 
@@ -312,6 +316,11 @@ def main():
                         help='Camera ID for webcam capture')
     parser.add_argument('--device', type=str, default='',
                         help="Device to run on ('cuda' or 'cpu')")
+    parser.add_argument('--backbone', type=str, default='mobilenet_v3_small',
+                        choices=['resnet18', 'mobilenet_v2', 'mobilenet_v3_small'],
+                        help='Model backbone architecture')
+    parser.add_argument('--lightweight', action='store_true', default=True,
+                        help='Use lightweight model architecture to reduce model size')
     args = parser.parse_args()
     
     # Determine device
@@ -322,7 +331,7 @@ def main():
     print(f"Using device: {device}")
     
     # Load the model
-    model = load_model(args.model, device)
+    model = load_model(args.model, device, backbone=args.backbone, lightweight=args.lightweight)
     
     # Determine class names
     class_names = ['angry', 'happy', 'other', 'sad']  # Default class names

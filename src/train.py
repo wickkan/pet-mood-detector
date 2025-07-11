@@ -196,12 +196,12 @@ def main():
                         help='Directory with train, valid, and test folders')
     parser.add_argument('--batch_size', type=int, default=32,
                         help='Batch size for training')
-    parser.add_argument('--num_epochs', type=int, default=20,
+    parser.add_argument('--num_epochs', type=int, default=5,
                         help='Number of epochs to train for')
     parser.add_argument('--learning_rate', type=float, default=0.001,
                         help='Initial learning rate')
-    parser.add_argument('--backbone', type=str, default='resnet18',
-                        choices=['resnet18', 'mobilenet_v2'],
+    parser.add_argument('--backbone', type=str, default='mobilenet_v3_small',
+                        choices=['resnet18', 'mobilenet_v2', 'mobilenet_v3_small'],
                         help='Backbone architecture')
     parser.add_argument('--image_size', type=int, default=224,
                         help='Image size for training')
@@ -209,6 +209,8 @@ def main():
                         help='Number of worker threads for data loading')
     parser.add_argument('--save_dir', type=str, default='models',
                         help='Directory to save model checkpoints')
+    parser.add_argument('--lightweight', action='store_true',
+                        help='Use lightweight model architecture to reduce model size')
     args = parser.parse_args()
     
     # Set device
@@ -232,7 +234,8 @@ def main():
     model = PetMoodClassifier(
         num_classes=num_classes,
         backbone=args.backbone,
-        pretrained=True
+        pretrained=True,
+        lightweight=args.lightweight
     ).to(device)
     
     # Define loss function, optimizer, and scheduler

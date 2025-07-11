@@ -18,21 +18,27 @@ from src.model import PetMoodClassifier
 from src.predict import predict_image, predict_frame
 
 
-def load_model(model_path: str, device: str) -> PetMoodClassifier:
+def load_model(model_path: str, device: str, backbone="mobilenet_v3_small", lightweight=True):
     """
     Load the trained model.
     
     Args:
         model_path: Path to the model checkpoint
         device: Device to load the model on
+        backbone: Model backbone architecture
+        lightweight: Whether to use lightweight model architecture
         
     Returns:
         Loaded model
     """
+    # Check if model exists
     if not os.path.exists(model_path):
-        raise FileNotFoundError(f"Model file not found: {model_path}")
+        raise FileNotFoundError(f"Model not found at {model_path}")
     
-    model = PetMoodClassifier.load(model_path, device)
+    # Load model
+    model = PetMoodClassifier(num_classes=4, backbone=backbone, lightweight=lightweight)
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.to(device)
     model.eval()
     
     print(f"Model loaded from {model_path}")
@@ -197,6 +203,11 @@ def main():
     parser = argparse.ArgumentParser(description="Pet Mood Detector Gradio App")
     parser.add_argument('--model', type=str, default='../models/final_model.pth',
                         help='Path to the model checkpoint')
+    parser.add_argument('--backbone', type=str, default='mobilenet_v3_small',
+                        choices=['resnet18', 'mobilenet_v2', 'mobilenet_v3_small'],
+                        help='Model backbone architecture')
+    parser.add_argument('--lightweight', action='store_true', default=True,
+                        help='Use lightweight model architecture')
     parser.add_argument('--port', type=int, default=7860,
                         help='Port to run the Gradio app on')
     parser.add_argument('--share', action='store_true',
