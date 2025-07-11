@@ -1,0 +1,3 @@
+"""
+Pet Mood Detector package.
+"""
