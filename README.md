@@ -144,8 +144,3 @@ The model achieves approximately 85-90% accuracy on the validation set after tra
 - Mobile app deployment
 - Multi-animal detection in a single frame
 - Breed-specific emotion models
-
-## Acknowledgements
-
-- Transfer learning uses models pre-trained on ImageNet
-- Special thanks to pet owners who contributed to the dataset
