@@ -75,14 +75,14 @@ pet-mood-detector/
 
 ## Dataset
 
-The model is trained on a dataset of pet images categorized by emotional expressions:
+The model is trained on the [Pets Facial Expression Dataset](https://www.kaggle.com/datasets/anshtanwar/pets-facial-expression-dataset) from Kaggle, which contains pet images categorized by emotional expressions:
 
 - **Happy**: Pets showing signs of joy, play, or excitement
 - **Angry**: Pets showing aggression, fear, or discomfort
 - **Sad**: Pets showing signs of sadness or illness
 - **Other/Neutral**: Default category for neutral or unclear expressions
 
-The data is organized in the `data/master_folder/` directory with standard train/valid/test splits.
+The data is organized in the `data/master_folder/` directory with standard train/valid/test splits. The dataset was preprocessed and split into training, validation, and test sets to ensure robust model evaluation.
 
 ## Training
 
